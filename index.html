@@ -1,0 +1,274 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Laporan Kebersihan Kelas</title>
+        <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f9f9f9;
+            margin: 0;
+            padding: 0;
+        }
+        header {
+            background-color: #2196F3;
+            color: white;
+            text-align: center;
+            padding: 15px 0;
+        }
+        main {
+            padding: 20px;
+        }
+        form {
+            background-color: white;
+            padding: 20px;
+            border-radius: 5px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+            margin-bottom: 20px;
+        }
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+        }
+        input, select, textarea, button {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 15px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+        button {
+            background-color: #2196F3;
+            color: white;
+            border: none;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #1e88e5;
+        }
+        .hidden {
+            display: none;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+            background-color: white;
+        }
+        th, td {
+            padding: 10px;
+            border: 1px solid #ccc;
+            text-align: left;
+        }
+        th {
+            background-color: #2196F3;
+            color: white;
+        }
+        img {
+            width: 100px;
+            height: auto;
+        }
+        
+        @media (min-width: 768px) {
+        form {
+            display: grid;
+            grid-template-columns: 1fr 1fr; /* Dua kolom */
+            gap: 20px;
+        }
+        form label {
+            grid-column: span 2; /* Label tetap di satu baris */
+        }
+        textarea, button {
+            grid-column: span 2; /* Elemen tertentu melebar sepanjang kolom */
+        }
+        .logout-btn {
+        background-color: #f44336;
+        color: white;
+        border: none;
+        padding: 10px 20px;
+        border-radius: 5px;
+        cursor: pointer;
+        font-size: 16px;
+    }
+        .logout-btn:hover {
+        background-color: #d32f2f;
+    }
+    }
+    </style>
+    </style>
+</head>
+<body>
+    <header>
+        <h1>Laporan Kebersihan Kelas</h1>
+    </header>
+    <main>
+        <!-- Halaman Laporan -->
+        <div id="laporanPage">
+            <h2>Form Laporan Kebersihan</h2>
+            <form id="laporanForm">
+                <label for="namaPenjaga">Nama Penanggung Jawab</label>
+                <input type="text" id="namaPenjaga" placeholder="Masukkan nama" required>
+                
+                <label for="kelas">Kelas</label>
+                <input type="text" id="kelas" placeholder="Masukkan nama kelas" required>
+                
+                <label for="tanggal">Tanggal</label>
+                <input type="datetime-local" id="tanggal" required>
+                
+                <label for="kondisi">Kondisi Kebersihan</label>
+                <select id="kondisi" required>
+                    <option value="">-- Pilih Kondisi --</option>
+                    <option value="Sangat Bersih">Sangat Bersih</option>
+                    <option value="Bersih">Bersih</option>
+                    <option value="Kurang Bersih">Kurang Bersih</option>
+                    <option value="Kotor">Kotor</option>
+                </select>
+                
+                <label for="catatan">Catatan Tambahan</label>
+                <textarea id="catatan" rows="3" placeholder="Masukkan catatan tambahan (opsional)"></textarea>
+
+                <label for="foto">Foto Dokumentasi</label>
+                <input type="file" id="foto" accept="image/*" required>
+                
+                <button type="button" onclick="tambahLaporan()">Tambah Laporan</button>
+                <button class="logout-btn" onclick="logout()">Logout</button>
+            </form>
+
+            <h2>Daftar Laporan Kebersihan</h2>
+            <table id="tabelLaporan">
+                <thead>
+                    <tr>
+                        <th>No</th>
+                        <th>Nama Penanggung Jawab</th>
+                        <th>Kelas</th>
+                        <th>Tanggal</th>
+                        <th>Kondisi</th>
+                        <th>Catatan</th>
+                        <th>Foto</th>
+                        <th>Tenggat Waktu</th>
+                        <th>Aksi</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <!-- Data laporan akan ditampilkan di sini -->
+                </tbody>
+            </table>
+            <button onclick="lihatLaporanTelat()">Lihat Laporan Telat</button>
+            <div id="laporanTelatPage" class="hidden">
+                <h2>Laporan yang Melewati Tenggat Waktu</h2>
+                <table id="tabelTelat">
+                    <thead>
+                        <tr>
+                            <th>No</th>
+                            <th>Nama Penanggung Jawab</th>
+                            <th>Kelas</th>
+                            <th>Tanggal</th>
+                            <th>Kondisi</th>
+                            <th>Catatan</th>
+                            <th>Foto</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <!-- Data laporan telat -->
+                    </tbody>
+                </table>
+                <button onclick="tutupLaporanTelat()">Kembali</button>
+            </div>
+        </div>
+    </main>
+    <script>
+        const laporanList = [];
+
+        function tambahLaporan() {
+            const namaPenjaga = document.getElementById('namaPenjaga').value;
+            const kelas = document.getElementById('kelas').value;
+            const tanggalInput = document.getElementById('tanggal').value;
+            const kondisi = document.getElementById('kondisi').value;
+            const catatan = document.getElementById('catatan').value;
+            const fotoInput = document.getElementById('foto');
+            const fotoFile = fotoInput.files[0];
+
+            const tenggatJam = new Date(tanggalInput);
+            tenggatJam.setHours(16, 0, 0);
+
+            if (namaPenjaga && kelas && tanggalInput && kondisi && fotoFile) {
+                const reader = new FileReader();
+                reader.onload = function(event) {
+                    const fotoURL = event.target.result;
+
+                    laporanList.push({ namaPenjaga, kelas, tanggalInput, kondisi, catatan, fotoURL, tenggatJam });
+
+                    updateTabel();
+                    document.getElementById('laporanForm').reset();
+                };
+                reader.readAsDataURL(fotoFile);
+            } else {
+                alert('Harap lengkapi semua field!');
+            }
+        }
+
+        function updateTabel() {
+            const tbody = document.getElementById('tabelLaporan').querySelector('tbody');
+            tbody.innerHTML = '';
+            laporanList.forEach((laporan, index) => {
+                const telat = new Date(laporan.tanggalInput) > laporan.tenggatJam;
+                const row = `<tr>
+                    <td>${index + 1}</td>
+                    <td>${laporan.namaPenjaga}</td>
+                    <td>${laporan.kelas}</td>
+                    <td>${laporan.tanggalInput}</td>
+                    <td>${laporan.kondisi}</td>
+                    <td>${laporan.catatan || '-'}</td>
+                    <td><img src="${laporan.fotoURL}" alt="Foto Dokumentasi" width="100"></td>
+                    <td>${telat ? "Telat" : "Tepat Waktu"}</td>
+                </tr>`;
+                tbody.innerHTML += row;
+            });
+        }
+
+        function lihatLaporanTelat() {
+            const tbody = document.getElementById('tabelTelat').querySelector('tbody');
+            tbody.innerHTML = '';
+            laporanList
+                .filter(laporan => new Date(laporan.tanggalInput) > laporan.tenggatJam)
+                .forEach((laporan, index) => {
+                    const row = `<tr>
+                        <td>${index + 1}</td>
+                        <td>${laporan.namaPenjaga}</td>
+                        <td>${laporan.kelas}</td>
+                        <td>${laporan.tanggalInput}</td>
+                        <td>${laporan.kondisi}</td>
+                        <td>${laporan.catatan || '-'}</td>
+                        <td><img src="${laporan.fotoURL}" alt="Foto Dokumentasi" width="100"></td>
+                    </tr>`;
+                    tbody.innerHTML += row;
+                });
+            document.getElementById('laporanTelatPage').classList.remove('hidden');
+        }
+
+        function tutupLaporanTelat() {
+            document.getElementById('laporanTelatPage').classList.add('hidden');
+        }
+
+        // Mengecek apakah pengguna sudah login
+    document.addEventListener("DOMContentLoaded", () => {
+        const loggedInUser = localStorage.getItem('loggedInUser');
+        if (!loggedInUser) {
+            alert("Anda harus login terlebih dahulu.");
+            window.location.href = "login.html"; // Arahkan ke halaman login jika belum login
+        }
+    });
+
+    // Fungsi logout
+    function logout() {
+        if (confirm("Apakah Anda yakin ingin logout?")) {
+            localStorage.removeItem('loggedInUser'); // Hapus data sesi pengguna
+            alert("Anda telah logout.");
+            window.location.href = "login.html"; // Arahkan ke halaman login
+        }
+    }
+    </script>
+</body>
+</html>

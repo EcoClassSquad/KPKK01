@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Registrasi - Laporan Kebersihan Kelas</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f9f9f9;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+        .register-container {
+            background-color: white;
+            padding: 20px;
+            border-radius: 5px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+            width: 100%;
+            max-width: 400px;
+            text-align: center;
+        }
+        h1 {
+            margin-bottom: 20px;
+            font-size: 24px;
+        }
+        label {
+            display: block;
+            text-align: left;
+            margin-bottom: 5px;
+            font-weight: bold;
+        }
+        input, button {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 15px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+        button {
+            background-color: #2196F3;
+            color: white;
+            border: none;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #1e88e5;
+        }
+        .link-to-login {
+            margin-top: 15px;
+        }
+        .link-to-login a {
+            color: #2196F3;
+            text-decoration: none;
+        }
+        .link-to-login a:hover {
+            text-decoration: underline;
+        }
+        .error {
+            color: red;
+            font-size: 14px;
+            margin-bottom: 15px;
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <div class="register-container">
+        <h1>Registrasi</h1>
+        <form id="registerForm">
+            <label for="regUsername">Username</label>
+            <input type="text" id="regUsername" placeholder="Masukkan username" required>
+            
+            <label for="regPassword">Password</label>
+            <input type="password" id="regPassword" placeholder="Masukkan password" required>
+            
+            <label for="regConfirmPassword">Konfirmasi Password</label>
+            <input type="password" id="regConfirmPassword" placeholder="Konfirmasi password" required>
+            
+            <div class="error" id="registerError">Password tidak cocok</div>
+            
+            <button type="button" onclick="register()">Registrasi</button>
+        </form>
+        <div class="link-to-login">
+            Sudah punya akun? <a href="login.html">Login di sini</a>
+        </div>
+    </div>
+    <script>
+        function register() {
+            const username = document.getElementById('regUsername').value;
+            const password = document.getElementById('regPassword').value;
+            const confirmPassword = document.getElementById('regConfirmPassword').value;
+            const errorDiv = document.getElementById('registerError');
+            
+            if (password !== confirmPassword) {
+                errorDiv.style.display = "block";
+                errorDiv.textContent = "Password tidak cocok!";
+                return;
+            }
+            
+            // Simpan data user baru di localStorage
+            const users = JSON.parse(localStorage.getItem('users')) || [];
+            if (users.find(user => user.username === username)) {
+                errorDiv.style.display = "block";
+                errorDiv.textContent = "Username sudah terdaftar!";
+                return;
+            }
+            
+            users.push({ username, password });
+            localStorage.setItem('users', JSON.stringify(users));
+            
+            alert("Registrasi berhasil! Silakan login.");
+            window.location.href = "login.html"; // Arahkan ke halaman login
+        }
+    </script>    
+</body>
+</html>
